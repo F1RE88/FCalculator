@@ -1,0 +1,252 @@
+This is a classic "easter egg" project! Hiding a secret menu inside a functional-looking calculator is a great way to practice HTML, CSS, and JavaScript.
+
+Below, I have written the complete code for this website in a single file. It uses responsive CSS to match the aspect ratio and dark theme of your screenshot, and it includes the JavaScript needed to track your keystrokes. If the exact sequence **404789456123** is entered, it hides the calculator and reveals the secret links page.
+
+### How to use this:
+
+1. Copy the code below.
+2. Paste it into a text editor (like Notepad, VS Code, or TextEdit).
+3. Save the file as `secret-calc.html`.
+4. Double-click the file to open it in any web browser, or send it to your phone to view it there.
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #121212;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        /* Phone Screen Container */
+        #app-container {
+            width: 100%;
+            max-width: 400px;
+            height: 100vh;
+            max-height: 850px;
+            background-color: #1a1e23; /* Matches screenshot background */
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        /* --- Calculator Page --- */
+        #calculator {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 20px;
+        }
+
+        #display-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            padding-bottom: 20px;
+        }
+
+        #display {
+            color: white;
+            font-size: 4rem;
+            word-break: break-all;
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            padding-bottom: 20px;
+        }
+
+        button {
+            border: none;
+            border-radius: 50%;
+            width: 100%;
+            aspect-ratio: 1;
+            font-size: 1.8rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.2s;
+        }
+
+        button:active {
+            opacity: 0.7;
+        }
+
+        /* Color classes matching the image */
+        .btn-num { background-color: #383c43; color: white; }
+        .btn-op { background-color: #424e58; color: white; }
+        .btn-ac { background-color: #21516e; color: #c5ebf9; }
+        .btn-eq { background-color: #dfd1fc; color: #433367; }
+
+        /* --- Secret Links Page --- */
+        #links-page {
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 20px;
+            background-color: #1a1e23;
+            gap: 20px;
+        }
+
+        .link-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            width: 80%;
+            padding: 18px;
+            border-radius: 15px;
+            text-decoration: none;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: bold;
+            background-color: #383c43;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .link-card:hover {
+            transform: scale(1.05);
+            background-color: #424e58;
+        }
+
+        /* Specific Brand Colors on Hover */
+        .link-google:hover { background-color: #DB4437; }
+        .link-insta:hover { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); }
+        .link-fb:hover { background-color: #1877F2; }
+        .link-yt:hover { background-color: #FF0000; }
+        
+        .icon {
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="app-container">
+        
+        <div id="calculator">
+            <div id="display-container">
+                <div id="display"></div>
+            </div>
+            
+            <div class="keypad">
+                <button class="btn-ac" onclick="clearDisplay()">AC</button>
+                <button class="btn-op" onclick="append('()')">( )</button>
+                <button class="btn-op" onclick="append('%')">%</button>
+                <button class="btn-op" onclick="append('÷')">÷</button>
+
+                <button class="btn-num" onclick="append('7')">7</button>
+                <button class="btn-num" onclick="append('8')">8</button>
+                <button class="btn-num" onclick="append('9')">9</button>
+                <button class="btn-op" onclick="append('×')">×</button>
+
+                <button class="btn-num" onclick="append('4')">4</button>
+                <button class="btn-num" onclick="append('5')">5</button>
+                <button class="btn-num" onclick="append('6')">6</button>
+                <button class="btn-op" onclick="append('−')">−</button>
+
+                <button class="btn-num" onclick="append('1')">1</button>
+                <button class="btn-num" onclick="append('2')">2</button>
+                <button class="btn-num" onclick="append('3')">3</button>
+                <button class="btn-op" onclick="append('+')">+</button>
+
+                <button class="btn-num" onclick="append('0')">0</button>
+                <button class="btn-num" onclick="append('.')">.</button>
+                <button class="btn-num" onclick="backspace()"><i class="fa-solid fa-delete-left"></i></button>
+                <button class="btn-eq" onclick="calculate()">=</button>
+            </div>
+        </div>
+
+        <div id="links-page">
+            <h2 style="color: white; margin-bottom: 20px;">Secret Portal</h2>
+            
+            <a href="https://google.com/" target="_blank" class="link-card link-google">
+                <i class="fa-brands fa-google icon"></i> Google
+            </a>
+            
+            <a href="https://instagram.com/" target="_blank" class="link-card link-insta">
+                <i class="fa-brands fa-instagram icon"></i> Instagram
+            </a>
+            
+            <a href="https://facebook.com/" target="_blank" class="link-card link-fb">
+                <i class="fa-brands fa-facebook-f icon"></i> Facebook
+            </a>
+            
+            <a href="https://youtube.com/" target="_blank" class="link-card link-yt">
+                <i class="fa-brands fa-youtube icon"></i> YouTube
+            </a>
+        </div>
+
+    </div>
+
+    <script>
+        let displayValue = '';
+        const displayElement = document.getElementById('display');
+        const calcPage = document.getElementById('calculator');
+        const linksPage = document.getElementById('links-page');
+        
+        // The secret code
+        const SECRET_CODE = "404789456123";
+
+        function updateDisplay() {
+            displayElement.innerText = displayValue;
+        }
+
+        function append(val) {
+            displayValue += val;
+            updateDisplay();
+            checkSecret();
+        }
+
+        function clearDisplay() {
+            displayValue = '';
+            updateDisplay();
+        }
+
+        function backspace() {
+            displayValue = displayValue.slice(0, -1);
+            updateDisplay();
+        }
+
+        function calculate() {
+            // Added basic visual feedback for =, but real math logic is omitted 
+            // since the main goal is the secret code.
+            checkSecret(); 
+        }
+
+        function checkSecret() {
+            if (displayValue === SECRET_CODE) {
+                // Hide calculator, show links
+                calcPage.style.display = 'none';
+                linksPage.style.display = 'flex';
+                
+                // Clear the display so if they go back, it's reset
+                displayValue = '';
+                updateDisplay();
+            }
+        }
+    </script>
+</body>
+</html>
